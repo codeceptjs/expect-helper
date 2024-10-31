@@ -1,5 +1,5 @@
 {
-  "name": "@codeception/expect-helper",
+  "name": "@codeceptjs/expect-helper",
   "version": "0.1.0",
   "description": "Expect helper for CodeceptJS",
   "main": "index.js",
