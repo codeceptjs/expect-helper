@@ -2,21 +2,27 @@
 
 Expect helper for I.expect calls
 
-Zero-configuration when paired with other helpers like REST, Playwright:
+Installation:
+
+```sh
+npm i @codeceptjs/expect-helper --save
+```
+
+Enable it inside codecept conf file:
 
 ```js
-// inside codecept.conf.js
+// inside codecept.conf.js/ts
 {
   helpers: {
     Playwright: {...},
-    Expect: {},
+    Expect: {
+      require: '@codeceptjs/expect-helper'
+    },
   }
 }
 ```
 
 ## Usage
-
-## Methods
 
 ### I.expectEqual
 
