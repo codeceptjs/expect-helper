@@ -1,13 +1,24 @@
 {
   "name": "@codeceptjs/expect-helper",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Expect helper for CodeceptJS",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "mocha index_test.js"
   },
   "author": "Michael Bodnarchuk @davertmik",
   "license": "ISC",
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "exports": {
+    "require": "./index.cjs",
+    "import": "./index.js"
+  },
   "dependencies": {
     "@achingbrain/chai-string": "^2.0.1",
     "chai": "^5.1.2",

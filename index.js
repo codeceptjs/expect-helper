@@ -1,15 +1,12 @@
-const { output } = require('codeceptjs')
+import { use, expect, assert } from 'chai';
+import chaiExclude from 'chai-exclude';
+import { createRequire } from 'module';
 
-let chai;
-let expect;
+const require = createRequire(import.meta.url);
+const { output } = require('codeceptjs');
 
-import('chai').then((chaiImported) => {
-  chai = chaiImported;
-  expect = chai.expect;
-  // @ts-ignore
-  chai.use(require('chai-exclude'));
-  chai.use(require('chai-match-pattern'));
-});
+use(chaiExclude);
+use(require('chai-match-pattern'));
 
 /**
  * This helper allows performing assertions based on Chai.
@@ -115,7 +112,7 @@ class ExpectHelper {
   expectStartsWith(actualValue, expectedValueToStartWith, customErrorMsg = '') {
     // @ts-ignore
     output.step(`I expect "${JSON.stringify(actualValue)}" to start with "${JSON.stringify(expectedValueToStartWith)}"`)
-    return expect(actualValue.startsWith(expectedValueToStartWith), customErrorMsg ? `${customErrorMsg}: Expected "${actualValue}" to start with "${expectedValueToStartWith}"` : `Expected "${actualValue}" to start with "${expectedValueToStartWith}"`).to.be.true
+    return assert(actualValue.startsWith(expectedValueToStartWith), customErrorMsg ? `${customErrorMsg}: Expected "${actualValue}" to start with "${expectedValueToStartWith}"` : `Expected "${actualValue}" to start with "${expectedValueToStartWith}"`)
   }
 
   /**
@@ -129,7 +126,7 @@ class ExpectHelper {
     output.step(
       `I expect "${JSON.stringify(actualValue)}" to not start with "${JSON.stringify(expectedValueToNotStartWith)}"`,
     )
-    return expect(actualValue.startsWith(expectedValueToNotStartWith), customErrorMsg ? `${customErrorMsg}: Expected "${actualValue}" to start with "${expectedValueToStartWith}"` : `Expected "${actualValue}" not to start with "${expectedValueToNotStartWith}"`).to.be.false
+    return assert(!actualValue.startsWith(expectedValueToNotStartWith), customErrorMsg ? `${customErrorMsg}: Expected "${actualValue}" to start with "${expectedValueToNotStartWith}"` : `Expected "${actualValue}" not to start with "${expectedValueToNotStartWith}"`)
   }
 
   /**
@@ -140,7 +137,7 @@ class ExpectHelper {
   expectEndsWith(actualValue, expectedValueToEndWith, customErrorMsg = '') {
     // @ts-ignore
     output.step(`I expect "${JSON.stringify(actualValue)}" to end with "${JSON.stringify(expectedValueToEndWith)}"`)
-    return expect(actualValue.endsWith(expectedValueToEndWith), customErrorMsg ? `${customErrorMsg}: Expected "${actualValue}" to end with "${expectedValueToEndWith}"` : `Expected "${actualValue}" to end with "${expectedValueToEndWith}"`).to.be.true
+    return assert(actualValue.endsWith(expectedValueToEndWith), customErrorMsg ? `${customErrorMsg}: Expected "${actualValue}" to end with "${expectedValueToEndWith}"` : `Expected "${actualValue}" to end with "${expectedValueToEndWith}"`)
   }
 
   /**
@@ -153,7 +150,7 @@ class ExpectHelper {
     output.step(
       `I expect "${JSON.stringify(actualValue)}" to not end with "${JSON.stringify(expectedValueToNotEndWith)}"`,
     )
-    return expect(actualValue.endsWith(expectedValueToNotEndWith), customErrorMsg ? `${customErrorMsg}: Expected "${actualValue}" not to end with "${expectedValueToNotEndWith}"` : `Expected "${actualValue}" not to end with "${expectedValueToNotEndWith}"`).to.be.false
+    return assert(!actualValue.endsWith(expectedValueToNotEndWith), customErrorMsg ? `${customErrorMsg}: Expected "${actualValue}" not to end with "${expectedValueToNotEndWith}"` : `Expected "${actualValue}" not to end with "${expectedValueToNotEndWith}"`)
   }
 
   /**
@@ -176,7 +173,7 @@ class ExpectHelper {
     output.step(
       `I expect "${JSON.stringify(targetData)}" to match this JSON schema using AJV "${JSON.stringify(jsonSchema)}"`,
     )
-    chai.use(require('chai-json-schema-ajv').create(ajvOptions))
+    use(require('chai-json-schema-ajv').create(ajvOptions))
     return expect(targetData, customErrorMsg).to.be.jsonSchema(jsonSchema)
   }
 
@@ -263,7 +260,7 @@ class ExpectHelper {
   expectTrue(targetData, customErrorMsg = '') {
     // @ts-ignore
     output.step(`I expect "${JSON.stringify(targetData)}" to be true`)
-    return expect(targetData, customErrorMsg).to.be.true
+    return expect(targetData, customErrorMsg).to.be.true;
   }
 
   /**
@@ -328,7 +325,9 @@ class ExpectHelper {
   expectEqualIgnoreCase(actualValue, expectedValue, customErrorMsg = '') {
     // @ts-ignore
     output.step(`I expect and ingore case "${JSON.stringify(actualValue)}" to equal "${JSON.stringify(expectedValue)}"`)
-    return expect(actualValue.toLowerCase(), customErrorMsg).to.equal(expectedValue.toLowerCase())
+    let message = `expected '${actualValue}' to equal '${expectedValue}'`;
+    if (customErrorMsg) message = `${customErrorMsg}: ${message}`;
+    return expect(actualValue.toLowerCase(), message).to.equal(expectedValue.toLowerCase())
   }
 
   /**
@@ -364,25 +363,29 @@ class ExpectHelper {
    * @param {*} fieldsToExclude
    * @param {*} [customErrorMsg]
    */
-  expectDeepEqualExcluding(actualValue, expectedValue, fieldsToExclude, customErrorMsg = '') {
-    // @ts-ignore
-    output.step(
-      `I expect members of "${JSON.stringify(actualValue)}" and "${JSON.stringify(expectedValue)}" JSON objects are deeply equal excluding properties: ${JSON.stringify(fieldsToExclude)}`,
-    )
+   expectDeepEqualExcluding(actualValue, expectedValue, fieldsToExclude, customErrorMsg = '') {
+     // @ts-ignore
+     output.step(
+       `I expect members of "${JSON.stringify(actualValue)}" and "${JSON.stringify(expectedValue)}" JSON objects are deeply equal excluding properties: ${JSON.stringify(fieldsToExclude)}`,
+     )
 
-    const filterFields = (obj, fields) => {
-      const filteredObj = { ...obj };
-      fields.forEach(field => {
-        delete filteredObj[field];
-      });
-      return filteredObj;
-    };
+     const filterFields = (obj, fields = []) => {
+       const filteredObj = { ...obj };
+       if (Array.isArray(fields)) {
+         fields.forEach(field => {
+           delete filteredObj[field];
+         });
+       } else {
+         delete filteredObj[fields];
+       }
+       return filteredObj;
+     };
 
-    const filteredActualValue = filterFields(actualValue, fieldsToExclude);
-    const filteredExpectedValue = filterFields(expectedValue, fieldsToExclude);
+     const filteredActualValue = filterFields(actualValue, fieldsToExclude);
+     const filteredExpectedValue = filterFields(expectedValue, fieldsToExclude);
 
-    return expect(filteredActualValue, customErrorMsg).to.deep.equal(filteredExpectedValue);
-  }
+     return expect(filteredActualValue, customErrorMsg).to.deep.equal(filteredExpectedValue);
+   }
 
   /**
    * expects a JSON object matches a provided pattern
@@ -405,8 +408,8 @@ class ExpectHelper {
     };
     const result = matchesPattern(actualValue, expectedPattern);
     const errorMessage = customErrorMsg ? `${customErrorMsg}: Expected "${JSON.stringify(actualValue)}" to match the pattern "${JSON.stringify(expectedPattern)}"` : `Expected "${JSON.stringify(actualValue)}" to match the pattern "${JSON.stringify(expectedPattern)}"`;
-    return expect(result, errorMessage).to.be.true;
+    return assert(result, errorMessage);
   }
 }
 
-module.exports = ExpectHelper
+export default ExpectHelper
