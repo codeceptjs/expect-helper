@@ -1,6 +1,6 @@
 {
   "name": "@codeceptjs/expect-helper",
-  "version": "0.2.2",
+  "version": "1.0.0",
   "description": "Expect helper for CodeceptJS",
   "type": "module",
   "types": "index.d.ts",
