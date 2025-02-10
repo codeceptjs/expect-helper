@@ -3,6 +3,7 @@
   "version": "0.2.1",
   "description": "Expect helper for CodeceptJS",
   "type": "module",
+  "types": "index.d.ts",
   "main": "index.js",
   "scripts": {
     "test": "mocha index_test.js"
