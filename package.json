@@ -10,6 +10,14 @@
   },
   "author": "Michael Bodnarchuk @davertmik",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codeceptjs/expect-helper.git"
+  },
+  "bugs": {
+    "url": "https://github.com/codeceptjs/expect-helper/issues"
+  },
+  "homepage": "https://github.com/codeceptjs/expect-helper#readme",
   "publishConfig": {
     "access": "public"
   },
