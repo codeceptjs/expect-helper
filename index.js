@@ -1,12 +1,11 @@
 import { use, expect, assert } from 'chai';
 import chaiExclude from 'chai-exclude';
-import { createRequire } from 'module';
-
-const require = createRequire(import.meta.url);
-const { output } = require('codeceptjs');
+import chaiMatchPattern from 'chai-match-pattern';
+import chaiJsonSchemaAjv from 'chai-json-schema-ajv';
+import { output } from 'codeceptjs';
 
 use(chaiExclude);
-use(require('chai-match-pattern'));
+use(chaiMatchPattern);
 
 /**
  * This helper allows performing assertions based on Chai.
@@ -173,7 +172,7 @@ class ExpectHelper {
     output.step(
       `I expect "${JSON.stringify(targetData)}" to match this JSON schema using AJV "${JSON.stringify(jsonSchema)}"`,
     )
-    use(require('chai-json-schema-ajv').create(ajvOptions))
+    use(chaiJsonSchemaAjv.create(ajvOptions))
     return expect(targetData, customErrorMsg).to.be.jsonSchema(jsonSchema)
   }
 
