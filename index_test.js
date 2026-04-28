@@ -1,9 +1,13 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
+import codeceptjs, { output } from 'codeceptjs';
 import ExpectHelper from './index.js';
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const { output } = require('codeceptjs');
+
+// In a real codecept run the framework sets globalThis.codeceptjs from
+// lib/host.js so ExpectHelper can reach back into the runner without doing
+// a top-level `import 'codeceptjs'`. Tests don't go through the runner, so
+// we register the same handle ourselves.
+globalThis.codeceptjs = codeceptjs;
 
 let I;
 
