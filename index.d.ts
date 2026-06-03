@@ -1,4 +1,4 @@
-declare class ExpectHelper {
+export default class ExpectHelper {
     expectEqual(actualValue: any, expectedValue: any, customErrorMsg?: string): void;
     expectNotEqual(actualValue: any, expectedValue: any, customErrorMsg?: string): void;
     expectDeepEqual(actualValue: any, expectedValue: any, customErrorMsg?: string): void;
